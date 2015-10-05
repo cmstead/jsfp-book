@@ -143,4 +143,39 @@ This expansion on the maybe function gives us a tremendous amount of power when 
 
 Maybe and either are the core of creating a sanitary environment to program in, but the applications reach farther and deeper as we touch different aspects of functional programming. These composite functions bring to bear what we know about data and types. Maybe and either ask the same questions of each piece of data presented to them so we can get added guarantees and stability in our applications through better data integrity.
 
-###Data Access
+###Functions
+
+While talking about data, it is important we talk about one of the key data types, functions. Functions in Javascript, much like other functional programming languages, is data. There are several things we can do with functions in Javascript which can't be done with methods in languages like Java or C#.  Functions can be stored in variables, passed to other functions as data and even manipulated like other data types.
+
+Functions are typically defined using the function keyword.  Function expressions are represented by the function keyword, an optional name, a list of arguments and a function body. This is all rather rudimentary information for the seasoned Javascript developer, but it is important as we dig into the way functions play roles both as data and as a means to introduce behaviors into a program. Let's take a look at a simple function.
+
+	function add (a, b){
+		return a + b;
+	}
+
+We can refer to this function by its name 'add' and we can call it to take the sum of two numbers, but there is more that lives just beneath the surface. Functions also have properties like length and toString, which are inherited from its prototype.  Not only can we create function expressions, but we can instantiate function objects and use them just as we would any other function.
+
+In order to understand the deeper parts of the function data type, let's explore functions handled only as data, instead of operations for building applications. We will create a function object, investigate properties on that function and even assign new properties. We could even create lists of functions, but let's start with just one.
+
+	var greet = new Function('subject', 'return \'Hello, \' + subject;');
+	
+	// greet is a callable function
+	greet('world'); // Hello, world
+	
+	var hello = greet;
+	
+	hello.subject = 'universe';
+	hello(greet.subject); // Hello, universe
+	
+	hello.length; // 1
+	greet.length; // 1
+	greet.name; // ''
+	greet === hello; // true
+	getType(greet); // function
+
+	greet.toString();
+	// 'function anonymous(subject\n/**/) {\nreturn \'Hello, \' + subject;\n}'
+
+There are limitations to what can be done with a funciton, like changing its name or body, but clearly functions can be treated the same way a complex data type like an object literal could. This introduces new behaviors which could not be implemented in typical object oriented languages.  The fact that functions are data makes functions _first class citizens_ in Javascript.
+
+###Complex Data Structures and Data Access
