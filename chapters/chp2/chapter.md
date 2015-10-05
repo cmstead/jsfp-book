@@ -145,11 +145,11 @@ Maybe and either are the core of creating a sanitary environment to program in, 
 
 ###Functions
 
-When discussing functional programming and data it is key to discuss one of the core data types to the language, functions. Javascript, like other functional programming languages, treats functions like data. This means that functions can take on characteristics which are intrinsic to other data types and are defined in the core language the same way any other datat type might be. This particular behavior is why it is common to hear functions in Javascript referred to as _first class citizens_.
+When discussing functional programming and data we must discuss one of the core data types to the language, functions. Javascript, like other functional programming languages, treats functions like data. This means that functions can take on characteristics which are intrinsic to other data types and are defined in the core language the same way any other data type might be. This particular behavior is why it is common to hear functions in Javascript referred to as _first class citizens_.
 
 Two things make functions unique in Javascript. First, functions are executable, which allows them to provide behavior in the language. Second, functions can be expressed with a special keyword, 'function,' as a means to define the function with or without a uniquely identifying name. Aside from these two distinct characteristics, functions behave much like other complex data types like objects.
 
-Before we explore the deeper nature of functions as data, let's take a look at an idiomatic method for creating a new function. The function keyword acts similarly to an operator or a macro in other functional languages. Functions can be declared with or without a name.  All other elements of the function are required.
+Before we explore the deeper nature of functions as data, let's take a look at an idiomatic method for creating a new function. The function keyword acts similarly to an operator or a macro in other functional languages. Functions can be declared with or without a name, the other two defining elements, arguments and function body, are required. Below we have described two common arithmetic functions.
 
 	// Defining a named function
 	function add (a, b){
