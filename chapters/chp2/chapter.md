@@ -145,17 +145,30 @@ Maybe and either are the core of creating a sanitary environment to program in, 
 
 ###Functions
 
-While talking about data, it is important we talk about one of the key data types, functions. Functions in Javascript, much like other functional programming languages, is data. There are several things we can do with functions in Javascript which can't be done with methods in languages like Java or C#.  Functions can be stored in variables, passed to other functions as data and even manipulated like other data types.
+When discussing functional programming and data we must discuss one of the core data types to the language, functions. Javascript, like other functional programming languages, treats functions like data. This means that functions can take on characteristics which are intrinsic to other data types and are defined in the core language the same way any other data type might be. This particular behavior is why it is common to hear functions in Javascript referred to as _first class citizens_.
 
-Functions are typically defined using the function keyword.  Function expressions are represented by the function keyword, an optional name, a list of arguments and a function body. This is all rather rudimentary information for the seasoned Javascript developer, but it is important as we dig into the way functions play roles both as data and as a means to introduce behaviors into a program. Let's take a look at a simple function.
+Two things make functions unique in Javascript. First, functions are executable, which allows them to provide behavior in the language. Second, functions can be expressed with a special keyword, 'function,' as a means to define the function with or without a uniquely identifying name. Aside from these two distinct characteristics, functions behave much like other complex data types like objects.
 
+Before we explore the deeper nature of functions as data, let's take a look at an idiomatic method for creating a new function. The function keyword acts similarly to an operator or a macro in other functional languages. Functions can be declared with or without a name, the other two defining elements, arguments and function body, are required. Below we have described two common arithmetic functions.
+
+	// Defining a named function
 	function add (a, b){
 		return a + b;
 	}
+	
+	// Defining an unnamed (anonymous) function
+	var multiply = function (a, b) {
+		return a * b;
+	}
+	
+	add.name; // 'add'
+	multiply.name; // ''
 
-We can refer to this function by its name 'add' and we can call it to take the sum of two numbers, but there is more that lives just beneath the surface. Functions also have properties like length and toString, which are inherited from its prototype.  Not only can we create function expressions, but we can instantiate function objects and use them just as we would any other function.
+Each of these functions can be called to execute their particular behavior, however multiply is actually not a function. Add is an integral part of the function definition for our add function. Multiply, however, is just a variable storing a reference to the anonymous function which expresses the multiplication behavior. Although this can seem like a minor difference, at runtime, the difference between a named or anonymous function can make or break a debugging session.
 
-In order to understand the deeper parts of the function data type, let's explore functions handled only as data, instead of operations for building applications. We will create a function object, investigate properties on that function and even assign new properties. We could even create lists of functions, but let's start with just one.
+Multiply is the perfect segue into managing functions as data. The pointer multiply stores represents a pointer to data, which could be executed and produce a behavior, or it could be treated as a complex data type, much the same way as an object literal. Functions and generic objects in Javascript are actually quite similar.
+
+Functions, like every data type in Javascript, have a prototype.  This prototype carries some of the same characterstics as objects and arrays. Functions have a length and a toString method. Properties can be attached to them and deleted from them. It is even possible to enumerate keys which have been attached to functions at runtime. Let's experiment a little with the function data type and see what we can accomplish.
 
 	var greet = new Function('subject', 'return \'Hello, \' + subject;');
 	
@@ -176,7 +189,7 @@ In order to understand the deeper parts of the function data type, let's explore
 	greet.toString();
 	// 'function anonymous(subject\n/**/) {\nreturn \'Hello, \' + subject;\n}'
 
-There are limitations to what can be done with a funciton, like changing its name or body, but clearly functions can be treated the same way a complex data type like an object literal could. This introduces new behaviors which could not be implemented in typical object oriented languages.  The fact that functions are data makes functions _first class citizens_ in Javascript.
+
 
 
 ###Lists and Maps
