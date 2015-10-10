@@ -178,4 +178,32 @@ In order to understand the deeper parts of the function data type, let's explore
 
 There are limitations to what can be done with a funciton, like changing its name or body, but clearly functions can be treated the same way a complex data type like an object literal could. This introduces new behaviors which could not be implemented in typical object oriented languages.  The fact that functions are data makes functions _first class citizens_ in Javascript.
 
+
+###Lists and Maps
+
+In many functional languages there are two collection types which appear repeatedly, lists and maps. Javascript does not natively support lists and maps are not handled in the most commonly understood way. Instead, Javascript has arrays and object literals. Although arrays are not lists and object literals are not maps, these are near enough to what we want of lists and maps that we can deal with them in a similar way.
+
+Lists, commonly, are a data structure which contains an ordered set of data which is accessible in a prescribed way.  Typically data must be accessed sequentially in a list, so data access can be slow. Where lists are slow for read access, they shine in two key ways. First, lists have a very fast write process and their growth characteristic is linear. This means lists are fast to write to and they only consume as much space as is needed to store the list as a whole. Second, lists are excellent for managing data which is intended to be immutable.  In other words, if the data in a list is intended to be written once and never modified, lists are excellent because the initial write operation into a list is done in constant time.
+
+In Lisp, formerly known as LISP, short for LISt Processor, lists are the primary data type. Lists are so important to Lisp the makeup of the core syntax is nothing more than a collection of lists.  If we were to look at a simple addition operation in Lisp, it is merely a list containing the operator and two numbers. If we wanted to create a collection of numbers, it would be constructed with almost identical syntax.
+
+	(+ 5 6) ; Adds 5 and 6, resulting in 11
+	'(1 2 3 4 5) ; A list of the first five positive integers
+
+Javascript has diverged from its Lisp-related Scheme ancestry, but we can still see similarities between Javascript and its heritage.  Creating an array of numbers is similar enough we can almost recognize the syntax.  Addition on the other hand, that's gone toward C.
+
+	5 + 6; // 11
+	[1, 2, 3, 4, 5];
+
+The important idea we can capture from this comparison is arrays share the sequential set concept which was born of lists. The key places arrays and lists vary is in their read and write characteristics. Reading an array sequentially has the same performance characteristic as a list. To read from the beginning of an array to the end occurs in linear, O(n), time. Arrays have the concept of a random read behavior, which occurs in constant or O(1) time. Lists, on the other hand, have no random read behavior, so accessing the nth element means we must read through n-1 elements to reach the nth element, so the read time for the nth element in a list is the same as the entire list, O(n).
+
+Lists, however, win out over arrays when adding elements. As we add elements to an array, the system must reallocate memory for the array which can result in an O(n) processing time. Lists perform allocation much faster and can allocate space for a new element in O(1) time. This memory allocation speed can be a big win when lots of writing is being done, especially in a low-resource environment.
+
+All of this information is important for evaluating the performance characteristics of operations we perform on arrays as we move through this book, however, we have the advantage of working with a language which has good support for arrays. This means inside the Javascript interpreter, there are optimizations which are performed to help limit the impact to the system when reallocation is necessary for arrays. 
+
+Javascript, as mentioned earlier, has support for map-like structure, Object. An object differs from maps primarily through the extended functionality provided through Object.prototype.  For the core functionality, however, objects in Javascript maintain a list of key-value pairs. These pairs allow random access behavior similar to that seen in arrays. Maps also allow for random access behaviors and have relatively similar memory allocation characteristics.
+
+Understanding the relation between maps and objects will help moving forward through this book since we will want to talk about lists and maps instead of arrays and objects. Most of the functionality we will construct around arrays and objects is rooted in lists and maps instead, so it will help to bridge the gap between other functional languages and Javascript if we discuss our behaviors using the same terms.
+
+
 ###Complex Data Structures and Data Access
