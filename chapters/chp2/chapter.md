@@ -190,8 +190,6 @@ Functions, like every data type in Javascript, have a prototype.  This prototype
 	// 'function anonymous(subject\n/**/) {\nreturn \'Hello, \' + subject;\n}'
 
 
-
-
 ###Lists and Maps
 
 In many functional languages there are two collection types which appear repeatedly, lists and maps. Javascript does not natively support lists and maps are not handled in the most commonly understood way. Instead, Javascript has arrays and object literals. Although arrays are not lists and object literals are not maps, these are near enough to what we want of lists and maps that we can deal with them in a similar way.
