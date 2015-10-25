@@ -190,6 +190,44 @@ Functions, like every data type in Javascript, have a prototype.  This prototype
 	// 'function anonymous(subject\n/**/) {\nreturn \'Hello, \' + subject;\n}'
 
 
-###Lists and Maps
+###Lists
 
-###Complex Data Structures and Data Access
+In functional programming, lists are an important data structure for handling, storing and retrieving data. Lists are, at their most abstract, a collection of ordered data. When we talk about ordered data, the order is not necessarily a meaningful or predictable thing, instead it is simply the order in which the data was place in the collection.
+
+Javascript does not support traditional lists by default, unlike other functional languages. Instead, Javascript has an array collection, which provides certain access characteristics which reach beyond typical lists. Aside from a defined order characteristic, arrays also have a random access characteristic which provides speed when capturing the nth element of your collection.  Let's use this as a jumping off point to look at interacting with arrays as lists.
+
+Lists and arrays share one common trait, a head or first element. This element is interesting because for both arrays and lists, the access time is O(1) otherwise known as constant time. Regardless of how large the array or list is, we can always access the first element without knowing anything about the rest of the collection.  Let's create a function for getting the first element in an array.
+
+	function first (list) {
+		return list[0];
+	}
+	
+Although this function seems rather futile, it turns out this is a very common behavior in functional programming. More often than not, we are more iterested with the first value in a list or array than in any other particular element. Even in a common iteration scenario, typically iterations start from one end of the collection and work to the other. Effectively, what we are left looking at is the first element of our list and the rest of our list. This means we will want another function to get the remaining list in order to continue our iteration. Let's call this function "rest."
+
+	function rest (list) {
+		return list.slice(1);
+	}
+
+First and rest, together, create the foundation for performing non-destructive actions on lists. First simply peeks at the head of our list and returns that value. Rest does the grunt work of slicing the head value from the list and returning a new list, one value shorter than the original list. We can see this behavior at work if we treat Javascript arrays as if they were identical to their ordered list counterpart.  Suppose we wanted to find the nth value of a list, we could create a function, nth, to do this for us, taking a list and index, and returning the nth value.
+
+    function nth (index, list) {
+		var tempList = list,
+		    currentIndex = 0;
+		
+		while (not( isUndefined( first( tempList ))) && greater(index, currentIndex)) {
+			tempList = rest(tempList);
+			currentIndex = add(index, 1);
+		}
+		
+		return maybe(first(tempList));
+	}
+
+This nth function actually exposes the declarative nature of using functions over operators. It is especialy useful when looking at "not isUndefined first tempList" which states in clear language precisely what we are really testing. Hwever informative this code is, it is unnecessary and verbose. There is a better way to accomplish iterations, which we will discuss later and there is a better way to access the nth element of our list. We can take advantage of what we know about arrays in Javascript and write a simpler, faster function. Let's create a more idiomatic nth function which will be both brief and efficient.
+
+	function nth (index, list) {
+		return list[index];
+	}
+
+
+###Maps
+
