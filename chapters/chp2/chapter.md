@@ -192,5 +192,4 @@ Functions, like every data type in Javascript, have a prototype.  This prototype
 
 ###Lists and Maps
 
-
 ###Complex Data Structures and Data Access
