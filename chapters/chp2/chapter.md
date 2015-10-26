@@ -231,3 +231,99 @@ This nth function actually exposes the declarative nature of using functions ove
 
 ###Maps
 
+Maps are the final piece of the data puzzle for functional programming. Maps are complex data types which store key value pairs for fast, random retrieval of information. Much like lists, Javascript does not support native maps directly. Instead we can use object literals in the place of maps. The surface functionality is similar enough, once we dive into working with keys ad values, any specific differences will disappear.
+
+The first thing we will want to accomplish with maps is reading existing data. It is quite common to retrieve data from an endpoint and need to interact with it. JSON has become the lingua franca of data interactions, so it is likely any data received from a service will be an object.  Let's have a look at getting data from an object.
+
+	function pick (key, map) {
+		return maybe(either({}, maybe(map, 'object'))[key]);
+	}
+
+At first glance that looks like quite a bit of code, but we get some guarantees not provided by Javascript idiomatic behaviors. We introduced maybe and either as data types eariler in this chapter to provide data stability. Now we can see the payoff with pick. Let's break down what is happening and why returning a maybe type is valuable here.
+
+Our innermost maybe does a type check for 'object' and returns either the map object, or null. This is the baseline for how maybe works, which means we know with precision what will be returned. Our data will either exist and it is an object, or it is null.  A null value means the type check failed and our map was not an object.
+
+The next check is an untyped either. This means we are relying on the value to either be truthy or falsey. Our maybe check already did the work, so we are just interested in whether the object is null or an object we can make a key reference against. The default value returned by our either is an object, so the result will always be an object.  We now have a guaranteed stable object to dereference a key against.
+
+Finally we return a maybe value. This means pick will always return either the intended value, or null. In much the same way that our inner maybe gave us a type guarantee the outer maybe ensures the result of our function will always provide an expected result which provides data guarantees to the calling function,  These guarantees help to eliminate script failures due to unexpected values and null pointer references. In other words, our pick function won't break and it does its best to avoid breaking other code too.
+
+Our pick function puts us in just the right place to dig deeper into objects. It's fantastic when we can get a value safely one level deep in our objects, but often we need to access data deeper than one level in an object. We could chain several pick functions together to find a value, or we could do it the functional way, and build an abstraction which says precisely what it does.  Let's build a better function.
+
+	function deref (key, map) {
+		var tokens = either('', key, 'string').split('.'),
+			result = null;
+		
+		while(not( isUndefined( first(tokens)))) {
+			result = pick(first(tokens));
+			tokens = rest(tokens); 
+		}
+		
+		return result;
+	}
+
+Deref is just an iterative layer over the top of pick, which makes the entire development process rather painless. We didn't need to perform even one null check because we had the guarantee of the maybe type built into pick. This means result our result is, implicitly, a maybe value. We can guarantee our result will always either be the intended result, or null. That's a really strong guarantee to provide in our code when we can never be quite sure about the quality of the data we might get.
+
+We have looked at accessing data in a map, though the keys can be as meaningful as the data sometimes. Maps can be constructed around keys which identify the data stored at each location uniquely. Keys which are universally unique identifiers (UUIDs) or record IDs can be useful for understanding and interacting with the data contained in a map. Javascript has the Object.keys function, but when we call it with null or 'foo' or 983, it fails spectacularly. Let's fix that.
+
+	function keys (map) {
+		return Object.keys(either({}, maybe(map, 'object')));
+	}
+
+The last data function we are going to look at for managing map data is a function to capture just the values of a map and return them as a list. Sometimes all we need to do something useful is a set of values. This is common when we need fast access by an ID as a collection is being built, but we really need a list in the end, or if an object is merely masquerading as an array. The second case is especially frustrating since the structure could really have been an array all along.
+
+	function toValues (map) {
+		var keys = keys(map),
+			result = [];
+		
+		while(not( isUndefined( first( keys )))) {
+			result = pick(first(keys), map);
+			keys = rest(keys);
+		}
+		
+		return result;
+	}
+
+Once we have a toValues function, we can easily work with and create maps, then convert them to lists with a single function call. As we dig deeper into the world of functional programming in Javascript, this kind of power will pay great dividends when we start working with large or complex data structures, breaking them down and using the resulting collections to get real work done.
+
+
+###Ideas In action
+
+Our keys function uses a similar pattern to the pick function. It is useful to identify patterns and abstract them away as we dig into a new functional way of thinking. If we receive an object, or map as we are calling it, it is not always enough to simply call either({}, map, 'object'). Let's call this the Object Option pattern. We can even develop a new function which encapsulates this behavior, and rewrite our pick and keys functions.
+
+	function objectOption (map) {
+		return either({}, maybe(map, 'object'));
+	}
+	
+	function pick (key, map) {
+		return maybe(objectOption(map)[key]);
+	}
+	
+	function keys (map) {
+		return Object.keys(objectOption(map));
+	}
+
+Another pattern which emerged is a check for whether the first value of an array is undefined. When beginning the journey to understanding functional programming, it is helpful to keep familiar constructs close at hand. Although we will identify new ways to iterate through lists in coming chapters, while and for loops will still be a great ally when trying to break down or work with lists of data.  Let's look at a new kind of predicate composed of other functions. This kind of composite thinking is useful when creating a domain specific language (DSL) which lines up with the way your application consumes data.
+
+	function listOption (list) {
+		return either([], maybe(list, 'object'));
+	}
+
+	function firstExists (list) {
+		return not(isUndefined(first(listOption(list))));
+	}
+
+Much like objectOption, listOption gives us a simple, declarative way to stabilize our list. Once we have a listOption function, we can encapsulate the not undefined first behavior into a new function, firstExists.  By using firstExists, we can rewrite and clarify our iterator logic substantially. Let's take a second look at deref.
+
+	function deref (key, map) {
+		var tokens = either('', key, 'string').split('.'),
+			result = null;
+		
+		while(firstExists(tokens)){
+			result = pick(first(tokens), map);
+			tokens = rest(tokens);
+		}
+		
+		return result;
+	}
+	
+Now our iterator really says exactly what we mean, "while a first element exists, iterate." This really demonstrates the power we get from functional programming and good abstractions. Through the power of relaible type handling and understanding the data which flows through our application, we can take potentially complex data manipulations and reduce them to simple, expressive functions which declare our intent and reduce the amount of brain time involved in understanding what the last person wrote, even if the last person was you.
