@@ -236,7 +236,7 @@ Maps are the final piece of the data puzzle for functional programming. Maps are
 The first thing we will want to accomplish with maps is reading existing data. It is quite common to retrieve data from an endpoint and need to interact with it. JSON has become the lingua franca of data interactions, so it is likely any data received from a service will be an object.  Let's have a look at getting data from an object.
 
 	function pick (key, map) {
-		return maybe(either({}, maybe(map, 'object'))[key]);
+		return maybe(either({}, map, 'object')[key]);
 	}
 
 At first glance that looks like quite a bit of code, but we get some guarantees not provided by Javascript idiomatic behaviors. We introduced maybe and either as data types eariler in this chapter to provide data stability. Now we can see the payoff with pick. Let's break down what is happening and why returning a maybe type is valuable here.
@@ -266,7 +266,7 @@ Deref is just an iterative layer over the top of pick, which makes the entire de
 We have looked at accessing data in a map, though the keys can be as meaningful as the data sometimes. Maps can be constructed around keys which identify the data stored at each location uniquely. Keys which are universally unique identifiers (UUIDs) or record IDs can be useful for understanding and interacting with the data contained in a map. Javascript has the Object.keys function, but when we call it with null or 'foo' or 983, it fails spectacularly. Let's fix that.
 
 	function keys (map) {
-		return Object.keys(either({}, maybe(map, 'object')));
+		return Object.keys(either({}, map, 'object'));
 	}
 
 The last data function we are going to look at for managing map data is a function to capture just the values of a map and return them as a list. Sometimes all we need to do something useful is a set of values. This is common when we need fast access by an ID as a collection is being built, but we really need a list in the end, or if an object is merely masquerading as an array. The second case is especially frustrating since the structure could really have been an array all along.
@@ -288,31 +288,13 @@ Once we have a toValues function, we can easily work with and create maps, then 
 
 ###Ideas In action
 
-Our keys function uses a similar pattern to the pick function. It is useful to identify patterns and abstract them away as we dig into a new functional way of thinking. If we receive an object, or map as we are calling it, it is not always enough to simply call either({}, map, 'object'). Let's call this the Object Option pattern. We can even develop a new function which encapsulates this behavior, and rewrite our pick and keys functions.
-
-	function objectOption (map) {
-		return either({}, maybe(map, 'object'));
-	}
-	
-	function pick (key, map) {
-		return maybe(objectOption(map)[key]);
-	}
-	
-	function keys (map) {
-		return Object.keys(objectOption(map));
-	}
-
-Another pattern which emerged is a check for whether the first value of an array is undefined. When beginning the journey to understanding functional programming, it is helpful to keep familiar constructs close at hand. Although we will identify new ways to iterate through lists in coming chapters, while and for loops will still be a great ally when trying to break down or work with lists of data.  Let's look at a new kind of predicate composed of other functions. This kind of composite thinking is useful when creating a domain specific language (DSL) which lines up with the way your application consumes data.
-
-	function listOption (list) {
-		return either([], maybe(list, 'object'));
-	}
+A pattern which emerged wile we were iterating over lists is checking whether a first element exists. Since this behavior can be repeated throughout a number of iteration behaviors, it makes sense to abstract away this logic which, though informative, is not as declarative as it could be. Since we want to verify that the first element exists in a list, we could easily call our new function firstExists.  We can combine our first function and the predicates to verify its existence to create a new predicate.
 
 	function firstExists (list) {
-		return not(isUndefined(first(listOption(list))));
+		return not(isUndefined(first(list)));
 	}
 
-Much like objectOption, listOption gives us a simple, declarative way to stabilize our list. Once we have a listOption function, we can encapsulate the not undefined first behavior into a new function, firstExists.  By using firstExists, we can rewrite and clarify our iterator logic substantially. Let's take a second look at deref.
+Once we have a new abstraction for our list checking behavior, we can rewrite our deref behavior. Later we can take a look at how to further reduce the amount of logic and energy we put into this, but for now we can make an iteration to clarify our logic.
 
 	function deref (key, map) {
 		var tokens = either('', key, 'string').split('.'),
